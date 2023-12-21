@@ -5,11 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
@@ -31,42 +29,30 @@ public class Employee {
     private boolean hasVacation;
     private boolean isPcd;
 
+    // Novos campos
+    private String contractType;
+    private LocalDate hireDate;
+    private LocalDate dismissalDate;
+    private String employeeType;
+    private int registerNumber;
+    private String employmentRelationshipType;
+
+    @ManyToOne
+    @JoinColumn(name = "job_position_id")
+    private JobPosition jobPosition;
+
+    @ManyToOne
+    @JoinColumn(name = "department_id")
+    private Department department;
+
+    @ManyToOne
+    @JoinColumn(name = "employer_id")
+    private Employer employer;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "person_id")
+    private Person person;
+
     // Construtores, getters e setters gerados pelo Lombok
-
-    public void increaseSalary(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) > 0) {
-            this.salary = this.salary.add(amount);
-            System.out.println("Salário aumentado em " + amount);
-        } else {
-            System.out.println("O valor do aumento deve ser positivo.");
-        }
-    }
-
-
-    public void promote(String newPosition) {
-        if (!newPosition.equals(this.position)) {
-            // Apenas muda a posição se for diferente da atual
-            System.out.println("Promoção para " + newPosition);
-            this.position = newPosition;
-        } else {
-            System.out.println("O funcionário já ocupa a posição de " + newPosition);
-        }
-    }
-
-
-    public void takeVacation() {
-        if (!this.hasVacation) {
-            // Concede férias se o funcionário ainda não estiver de férias
-            System.out.println("Férias concedidas!");
-            this.hasVacation = true;
-        } else {
-            System.out.println("O funcionário já está de férias.");
-        }
-    }
-
-
-    public void ensureSocialSecurity() {
-        System.out.println("Registrando o funcionário nos órgãos de previdência social.");
-    }
 
 }

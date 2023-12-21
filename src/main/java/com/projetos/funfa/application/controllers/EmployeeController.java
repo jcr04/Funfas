@@ -2,6 +2,7 @@ package com.projetos.funfa.application.controllers;
 
 import com.projetos.funfa.application.service.EmployeeService;
 import com.projetos.funfa.domain.dtos.EmployeeDTO;
+import com.projetos.funfa.domain.requests.EmployeeRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +36,8 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeDTO employeeDTO) {
-        EmployeeDTO createdEmployee = employeeService.createEmployee(employeeDTO);
+    public ResponseEntity<EmployeeDTO> createEmployee(@RequestBody EmployeeRequestDTO requestDTO) {
+        EmployeeDTO createdEmployee = employeeService.createEmployee(requestDTO);
         return new ResponseEntity<>(createdEmployee, HttpStatus.CREATED);
     }
 

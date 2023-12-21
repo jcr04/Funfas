@@ -1,18 +1,12 @@
-package com.projetos.funfa.domain.dtos;
+package com.projetos.funfa.domain.requests;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class EmployeeDTO {
-    private UUID id;
+public class EmployeeRequestDTO {
     private String name;
     private int age;
     private String position;
@@ -27,9 +21,4 @@ public class EmployeeDTO {
     private String employeeType;
     private int registerNumber;
     private String employmentRelationshipType;
-
-    private JobPositionDTO jobPosition;
-    private DepartmentDTO department;
-    private EmployerDTO employer;
-    private PersonDTO person;
 }

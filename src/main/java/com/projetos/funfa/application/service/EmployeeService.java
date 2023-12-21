@@ -2,6 +2,7 @@ package com.projetos.funfa.application.service;
 
 import com.projetos.funfa.domain.dtos.EmployeeDTO;
 import com.projetos.funfa.domain.model.Employee;
+import com.projetos.funfa.domain.requests.EmployeeRequestDTO;
 import com.projetos.funfa.infra.repository.EmployeeRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,26 +31,22 @@ public class EmployeeService {
     }
 
     public Optional<EmployeeDTO> getEmployeeById(UUID id) {
-        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
-        return optionalEmployee.map(this::convertToDTO);
+        return employeeRepository.findById(id).map(this::convertToDTO);
     }
 
-    public EmployeeDTO createEmployee(EmployeeDTO employeeDTO) {
-        Employee employee = convertToEntity(employeeDTO);
-        Employee savedEmployee = employeeRepository.save(employee);
-        return convertToDTO(savedEmployee);
+    public EmployeeDTO createEmployee(EmployeeRequestDTO requestDTO) {
+        EmployeeDTO employeeDTO = new EmployeeDTO();
+        BeanUtils.copyProperties(requestDTO, employeeDTO);
+
+        // Adicione as chamadas necessárias para configurar outros campos e relacionamentos
+
+        Employee createdEmployee = employeeRepository.save(convertToEntity(employeeDTO));
+        return convertToDTO(createdEmployee);
     }
 
     public Optional<EmployeeDTO> updateEmployee(UUID id, EmployeeDTO employeeDTO) {
-        Optional<Employee> optionalEmployee = employeeRepository.findById(id);
-        if (optionalEmployee.isPresent()) {
-            Employee existingEmployee = optionalEmployee.get();
-            BeanUtils.copyProperties(employeeDTO, existingEmployee);
-            Employee updatedEmployee = employeeRepository.save(existingEmployee);
-            return Optional.of(convertToDTO(updatedEmployee));
-        } else {
-            return Optional.empty();
-        }
+        return employeeRepository.findById(id)
+                .map(existingEmployee -> updateEmployeeProperties(existingEmployee, employeeDTO));
     }
 
     public boolean deleteEmployee(UUID id) {
@@ -63,13 +60,23 @@ public class EmployeeService {
 
     private EmployeeDTO convertToDTO(Employee employee) {
         EmployeeDTO employeeDTO = new EmployeeDTO();
-        BeanUtils.copyProperties(employee, employeeDTO);
+        copyProperties(employee, employeeDTO);
         return employeeDTO;
     }
 
     private Employee convertToEntity(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
-        BeanUtils.copyProperties(employeeDTO, employee);
+        copyProperties(employeeDTO, employee);
         return employee;
+    }
+
+    private EmployeeDTO updateEmployeeProperties(Employee existingEmployee, EmployeeDTO employeeDTO) {
+        copyProperties(employeeDTO, existingEmployee);
+        Employee updatedEmployee = employeeRepository.save(existingEmployee);
+        return convertToDTO(updatedEmployee);
+    }
+
+    private void copyProperties(Object source, Object target) {
+        BeanUtils.copyProperties(source, target);
     }
 }
